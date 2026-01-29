@@ -34,12 +34,12 @@ Security is a first-class concern: the system must prevent malicious users from 
 
 ## High-Level Architecture
 Components:
-    - API Service (this module)
-    - Authentication Provider (JWT / OAuth / Session)
-    - Database (persistent scores)
-    - Cache (fast leaderboard reads)
-    - Realtime Transport (WebSocket / SSE)
-    - Frontend Clients
+- API Service (this module)
+- Authentication Provider (JWT / OAuth / Session)
+- Database (persistent scores)
+- Cache (fast leaderboard reads)
+- Realtime Transport (WebSocket / SSE)
+- Frontend Clients
 
 ---
 
@@ -66,23 +66,30 @@ Components:
 
 ### Update Score
 
-POST /api/v1/score/update
+POST 
+```bash
+/api/v1/score/update
+```
 
 Request Headers:
-    Authorization: Bearer <JWT>
-    Idempotency-Key: <UUID>
+- Authorization: Bearer <JWT>
+- Idempotency-Key: <UUID>
 
 Request Body:
+```bash
 {
   "action_id": "string",
   "action_signature": "string"
 }
+```
 
 Response:
+```bash
 {
   "success": true,
   "new_score": 120
 }
+```
 
 Behavior:
 1. Authenticate user via JWT
@@ -94,16 +101,20 @@ Behavior:
 
 ### Get Top 10 Scores
 
-GET /api/v1/scoreboard/top
+GET 
+```bash
+/api/v1/scoreboard/top
+```
 
 Response:
+```bash
 {
   "scores": [
     { "user_id": "uuid", "score": 150 },
     ...
   ]
 }
-
+```
 
 Behavior:
 1. Served primarily from cache
@@ -112,20 +123,26 @@ Behavior:
 ### Realtime Scoreboard Updates
 WebSocket / SSE Endpoint
 
-GET /api/v1/scoreboard/stream
+GET 
+```bash
+/api/v1/scoreboard/stream
+```
 
 Events:
+```bash
 {
   "type": "SCOREBOARD_UPDATE",
   "payload": {
     "scores": [...]
   }
 }
+```
 
 ---
 
 ## Execution Flow Diagram
 
+```bash
 sequenceDiagram
     participant Client as Frontend Client
     participant API as Scoreboard API Service
@@ -164,6 +181,7 @@ sequenceDiagram
 
     Realtime-->>Client: Push updated leaderboard
     Note right of Client: UI updates instantly without polling
+```
 
 ---
 
@@ -188,9 +206,9 @@ sequenceDiagram
 
 ## Summary
 This module provides:
-    - Secure score mutation
-    - Real-time leaderboard updates
-    - Scalable read performance
-    - Strong protection against abuse
+- Secure score mutation
+- Real-time leaderboard updates
+- Scalable read performance
+- Strong protection against abuse
 
 It is intentionally decoupled from frontend logic and ready for distributed deployment.
